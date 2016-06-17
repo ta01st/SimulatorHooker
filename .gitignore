@@ -1,0 +1,9 @@
+.theos
+*.o
+SBShortcutMenuSimulator
+PreferenceOrganizer2
+FLEXDylib
+Simulator.lnk
+kill
+*/*.dylib
+*/*.o

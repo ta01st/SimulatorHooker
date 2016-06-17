@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SH_ROOT=/Users/PoomSmart/Desktop/CydiaTweaks/SimulatorHooker
+SH_DYLIBS=$SH_ROOT/Injector/Injector.dylib
+SH_DYLIBS=$SH_DYLIBS":"$SH_ROOT/FLEXDylib/FLEXDylib.dylib
+SH_DYLIBS=$SH_DYLIBS":"$SH_ROOT/SBShortcutMenuSimulator/SBShortcutMenuSimulator.dylib
+
+if [ $1 == "1" ];then
+	make clean; make
+fi
+
+xcrun simctl spawn booted launchctl debug system/com.apple.SpringBoard --environment DYLD_INSERT_LIBRARIES=$SH_DYLIBS
+xcrun simctl spawn booted launchctl stop com.apple.SpringBoard

@@ -11,4 +11,4 @@ Most tweaks are (re)written using ZKSwizzle.
 
 Code, Compile, Update, and Yay.
 
-¯\_(ツ)_/¯
+¯\\_(ツ)_/¯

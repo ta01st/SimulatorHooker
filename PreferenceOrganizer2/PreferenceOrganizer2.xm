@@ -2,7 +2,7 @@
 #import "PO2Common.h"
 #import "../Common.h"
 #import <objc/runtime.h>
-
+#import <KarenLocalizer/KarenLocalizer.h>
 
 #ifndef kCFCoreFoundationVersionNumber_iOS_8_0
 #define kCFCoreFoundationVersionNumber_iOS_8_0 1140.10
@@ -60,6 +60,21 @@ static NSString *socialAppsLabel;
 static NSString *tweaksLabel;
 static NSString *appStoreAppsLabel;
 
+KarenLocalizer *karenLocalizer;
+
+static void PO2InitPrefs() {
+	PO2SyncPrefs();
+	PO2BoolPref(shouldShowAppleApps, ShowAppleApps, 1);
+	PO2BoolPref(shouldShowTweaks, ShowTweaks, 1);
+	PO2BoolPref(shouldShowAppStoreApps, ShowAppStoreApps, 1);
+	PO2BoolPref(shouldShowSocialApps, ShowSocialApps, 1);
+	karenLocalizer = [[KarenLocalizer alloc] initWithKarenLocalizerBundle:@"PreferenceOrganizer2"];
+	PO2StringPref(appleAppsLabel, AppleAppsName, [karenLocalizer karenLocalizeString:@"APPLE_APPS"]);
+	PO2StringPref(socialAppsLabel, SocialAppsName, [karenLocalizer karenLocalizeString:@"SOCIAL_APPS"]);
+	PO2StringPref(tweaksLabel, TweaksName, [karenLocalizer karenLocalizeString:@"TWEAKS"]);
+	PO2StringPref(appStoreAppsLabel, AppStoreAppsName, [karenLocalizer karenLocalizeString:@"APP_STORE_APPS"]);
+}
+
 static NSMutableArray *unorganisedSpecifiers = nil;
 
 %hook PSUIPrefsListController
@@ -75,12 +90,11 @@ static NSMutableArray *unorganisedSpecifiers = nil;
 {
 	if (specifier == nil)
 		return;
-	%orig(specifier);
+	%orig(specifier, arg2);
 }
 
 - (NSMutableArray *)specifiers {
 	NSMutableArray *specifiers = %orig();
-
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		if (unorganisedSpecifiers == nil)
@@ -142,9 +156,6 @@ static NSMutableArray *unorganisedSpecifiers = nil;
 				[organizableSpecifiers setObject:newSavedGroup forKey:currentOrganizableGroup];
 			}
 
-			
-			
-			
 			else if (currentOrganizableGroup) {
 				if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_8_0) {
 					
@@ -234,7 +245,6 @@ static NSMutableArray *unorganisedSpecifiers = nil;
 		
 	});
 
-	
 	return specifiers;
 }
 
@@ -245,7 +255,7 @@ static NSMutableArray *unorganisedSpecifiers = nil;
 	MSHookIvar<NSMutableArray *>(self, "_specifiers") = originalSpecifiers;
 }*/
 
--(void) _reallyLoadThirdPartySpecifiersForProxies:(id)arg1 withCompletion:(id)arg2 {
+/*-(void) _reallyLoadThirdPartySpecifiersForProxies:(id)arg1 withCompletion:(id)arg2 {
 	%orig(arg1, arg2);
 	if (shouldShowAppStoreApps) {
 		int thirdPartyID = 0;
@@ -266,7 +276,7 @@ static NSMutableArray *unorganisedSpecifiers = nil;
 		}
 		((PSListController *)self).specifiers = specifiers;
 	}
-}
+}*/
 
 %end
 
@@ -298,4 +308,6 @@ static NSMutableArray *unorganisedSpecifiers = nil;
 %ctor
 {
 	runIn(@"Preferences");
+	%init();
+	PO2InitPrefs();
 }

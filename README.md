@@ -1,7 +1,7 @@
 SimulatorHooker
 ==========
 
-A useful toolset for developer (at least for me) for testing their apps on iOS simulator.
+A useful toolset for developers (at least for me) for testing their apps on iOS simulator.
 
 Injector library would take care of loading code into UIKit applications.
 

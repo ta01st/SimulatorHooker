@@ -68,10 +68,17 @@ NSString *dylibPaths(NSString *names)
 	NSMutableString *dylibs = [NSMutableString string];
 	if (names && names.length > 0) {
 		NSArray *paths = [names componentsSeparatedByString:@","];
-		for (NSString *name in paths)
-			[dylibs appendString:[NSString stringWithFormat:@"%@:", SH_PATH(name)]];
+		for (NSString *name in paths) {
+			if ([name hasSuffix:@"-MAIN"]) {
+				name = [name stringByReplacingOccurrencesOfString:@"-MAIN" withString:@""];
+				[dylibs appendString:SH_PATH_2(name)];
+				[dylibs appendString:@":"];
+			}
+			else
+				[dylibs appendString:[NSString stringWithFormat:@"%@:", SH_PATH(name)]];
+		}
 	}
-	[dylibs appendString:SH_PATH(@"FLEXDylib")];
+	[dylibs appendString:SH_PATH_2(@"FLEXDylib")];
 	/*[dylibs appendString:@":"];
 	[dylibs appendString:SH_PATH(@"DarkMode")];*/
 	return dylibs;
@@ -88,7 +95,7 @@ NSDictionary *overridedEnv(NSDictionary *orig, SBApplicationInfo *self)
 	else if ([bundleIdentifier isEqualToString:@"com.apple.mobilesafari"])
 		env[@"DYLD_INSERT_LIBRARIES"] = dylibPaths(@"FullSafari");
 	else if ([bundleIdentifier isEqualToString:@"com.apple.Preferences"])
-		env[@"DYLD_INSERT_LIBRARIES"] = dylibPaths(@"PreferenceOrganizer2");
+		env[@"DYLD_INSERT_LIBRARIES"] = dylibPaths(@"PreferenceLoader-MAIN,PreferenceOrganizer2");
 	else
 		env[@"DYLD_INSERT_LIBRARIES"] = dylibPaths(@"");
 	NSLog(@"%@ for bundleIdentifier: %@", env, bundleIdentifier);

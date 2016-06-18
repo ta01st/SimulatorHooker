@@ -1,8 +1,6 @@
 #import "../Common.h"
 
 @interface FBApplicationInfo : NSObject
-- (NSURL *)bundleContainerURL;
-- (NSMutableDictionary *)_configureEnvironment:(NSDictionary *)environment;
 @end
 
 @interface SBApplicationInfo : FBApplicationInfo
@@ -25,8 +23,8 @@ NSString *dylibPaths(NSString *names)
 		}
 	}
 	[dylibs appendString:SH_PATH_2(@"FLEXDylib")];
-	/*[dylibs appendString:@":"];
-	[dylibs appendString:SH_PATH(@"DarkMode")];*/
+	[dylibs appendString:@":"];
+	[dylibs appendString:SH_PATH(@"DarkMode")];
 	return dylibs;
 }
 

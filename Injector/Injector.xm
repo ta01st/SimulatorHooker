@@ -1,6 +1,4 @@
 #import "../Common.h"
-#import <UIKit/UIKit.h>
-#import <dlfcn.h>
 
 @interface BSSettings : NSObject
 @end

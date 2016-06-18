@@ -1,9 +1,9 @@
-CLANG_SIMULATOR = xcrun --sdk iphonesimulator clang -Os -miphoneos-version-min=9.0 -isysroot "`xcrun --sdk iphonesimulator --show-sdk-path`" -arch i386 -arch x86_64 -fmodules #-fobjc-arc
+TARGET = simulator:clang
 
-all:
-	$(CLANG_SIMULATOR) -c -o Injector.o Injector.m
-	$(CLANG_SIMULATOR) -c -o ZKSwizzle.o ../ZKSwizzle.m
-	$(CLANG_SIMULATOR) -dynamiclib -o Injector.dylib Injector.o ZKSwizzle.o
+include $(THEOS)/makefiles/common.mk
 
-clean:
-	rm -f *.o Injector.dylib
+TWEAK_NAME = Injector
+Injector_FILES = Injector.xm
+Injector_USE_SUBSTRATE = 0
+
+include $(THEOS_MAKE_PATH)/tweak.mk

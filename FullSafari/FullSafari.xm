@@ -1,4 +1,3 @@
-#import "../ZKSwizzle.h"
 #import "../Common.h"
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
@@ -26,43 +25,43 @@ BOOL newFluid = YES;
 @interface BrowserToolbar : NSObject
 @end
 
-hook(NSUserDefaults)
+%hook NSUserDefaults
 
 - (BOOL)boolForKey:(NSString *)key
 {
-	return [key isEqualToString:@"ShowTabBar"] ? YES : ZKOrig(BOOL, key);
+	return [key isEqualToString:@"ShowTabBar"] ? YES : %orig;
 }
 
-endhook
+%end
 
-hook(UIDevice)
+%hook UIDevice
 
 - (UIUserInterfaceIdiom)userInterfaceIdiom
 {
-	return override2 ? UIUserInterfaceIdiomPad : ZKOrig(UIUserInterfaceIdiom);
+	return override2 ? UIUserInterfaceIdiomPad : %orig;
 }
 
-endhook
+%end
 
-hook(UITraitCollection)
+%hook UITraitCollection
 
 - (UIUserInterfaceSizeClass)horizontalSizeClass
 {
-	return override ? UIUserInterfaceSizeClassRegular : ZKOrig(UIUserInterfaceSizeClass);
+	return override ? UIUserInterfaceSizeClassRegular : %orig;
 }
 
-endhook
+%end
 
-hook(UIViewController)
+%hook UIViewController
 
 - (BOOL)safari_isHorizontallyConstrained
 {
 	return YES;
 }
 
-endhook
+%end
 
-hook(TabController)
+%hook TabController
 
 - (BOOL)canAddNewTab
 {
@@ -76,22 +75,22 @@ hook(TabController)
 
 - (void)setUsesTabBar:(BOOL)arg
 {
-	ZKOrig(void, YES);
+	%orig(YES);
 }
 
-endhook
+%end
 
-hook(BrowserController)
+%hook BrowserController
 
 - (BOOL)_shouldUseNarrowLayout
 {
-	return override4 && newFluid ? NO : ZKOrig(BOOL);
+	return override4 && newFluid ? NO : %orig;
 }
 
 - (CGFloat)_navigationBarOverlapHeight
 {
 	override2 = YES;
-	CGFloat orig = ZKOrig(CGFloat);
+	CGFloat orig = %orig;
 	override2 = NO;
 	return orig;
 }
@@ -99,20 +98,20 @@ hook(BrowserController)
 - (void)dynamicBarAnimatorOutputsDidChange:(id)arg1
 {
 	override4 = YES;
-	ZKOrig(void, arg1);
+	%orig;
 	override4 = NO;
 }
 
 - (BOOL)usesNarrowLayout
 {
-	return override3 && newFluid ? NO : ZKOrig(BOOL);
+	return override3 && newFluid ? NO : %orig;
 }
 
 - (void)_updateUsesNarrowLayout
 {
 	override3 = newFluid;
 	override2 = newFluid;
-	ZKOrig(void);
+	%orig;
 	override3 = NO;
 	override2 = NO;
 }
@@ -120,14 +119,14 @@ hook(BrowserController)
 - (void)updateUsesTabBar
 {
 	override = YES;
-	ZKOrig(void);
+	%orig;
 	override = NO;
 }
 
 - (void)updateShowingTabBarAnimated:(BOOL)arg1
 {
 	override = YES;
-	ZKOrig(void);
+	%orig;
 	override = NO;
 }
 
@@ -136,9 +135,9 @@ hook(BrowserController)
 	return YES;
 }
 
-endhook
+%end
 
-hook(BrowserToolbar)
+%hook BrowserToolbar
 
 - (void)setItems:(NSArray *)items animated:(BOOL)arg2
 {
@@ -164,12 +163,12 @@ hook(BrowserToolbar)
 			[spacer release];
 		}
 	}
-	ZKOrig(void, items, arg2);
+	%orig(items, arg2);
 }
 
-endhook
+%end
 
-__attribute__((constructor)) static void init()
+%ctor
 {
 	runIn(@"Safari");
 }

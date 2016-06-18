@@ -1,4 +1,3 @@
-#import "../ZKSwizzle.h"
 #import "../Common.h"
 #import <AVFoundation/AVCaptureSession.h>
 
@@ -12,7 +11,7 @@
 @interface CAMCaptureCapabilities : NSObject
 @end
 
-hook(AVCaptureSession)
+%hook AVCaptureSession
 
 // get rid of crashing at startup
 - (BOOL)_buildAndRunGraph
@@ -20,29 +19,29 @@ hook(AVCaptureSession)
 	return YES;
 }
 
-@end
+%end
 
-hook(CAMCaptureEngine)
+%hook CAMCaptureEngine
 
 - (id)initWithPowerController:(id)arg1
 {
-	self = ZKOrig(id, arg1);
-	[(CAMCaptureEngine *)self _handleSessionDidStartRunning:nil];
+	self = %orig;
+	[self _handleSessionDidStartRunning:nil];
 	return self;
 }
 
-endhook
+%end
 
-hook(CAMViewfinderViewController)
+%hook CAMViewfinderViewController
 
 - (void)viewDidLoad
 {
-	ZKOrig(void);
+	%orig;
 }
 
-endhook
+%end
 
-hook(CAMCaptureCapabilities)
+%hook CAMCaptureCapabilities
 
 - (_Bool)isCameraSupportedForDevice:(NSInteger)device
 {
@@ -59,9 +58,9 @@ hook(CAMCaptureCapabilities)
 	return YES;
 }
 
-endhook
+%end
 
-__attribute__((constructor)) static void init()
+%ctor
 {
 	runIn(@"Camera");
 }

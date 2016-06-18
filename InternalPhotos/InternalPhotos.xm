@@ -1,4 +1,3 @@
-#import "../ZKSwizzle.h"
 #import "../Common.h"
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
@@ -17,7 +16,7 @@
 
 UIBarButtonItem *_btn;
 
-hook(PUAlbumListViewController)
+%hook PUAlbumListViewController
 
 - (UIBarButtonItem *)_internalButtonItem
 {
@@ -39,13 +38,13 @@ hook(PUAlbumListViewController)
 
 - (void)updateNavigationBarAnimated:(BOOL)animated
 {
-	ZKOrig(void, animated);
-	UINavigationItem *navigationItem = [[(PUAlbumListViewController *)self navigationItem] retain];
+	%orig;
+	UINavigationItem *navigationItem = [[self navigationItem] retain];
 	NSArray *buttonItems = navigationItem.leftBarButtonItems;
 	NSMutableArray *buttons = [[buttonItems retain] mutableCopy];
 	if (buttons == nil)
 		return;
-	UIBarButtonItem *internalButton = [[(PUAlbumListViewController *)self _internalButtonItem] retain];
+	UIBarButtonItem *internalButton = [[self _internalButtonItem] retain];
 	if ([buttons containsObject:internalButton])
 		return;
 	[buttons addObject:internalButton];
@@ -54,9 +53,10 @@ hook(PUAlbumListViewController)
 	[buttons release];
 	[internalButton release];
 }
-endhook
 
-__attribute__((constructor)) static void init()
+%end
+
+%ctor
 {
 	runIn(@"Photos");
 }

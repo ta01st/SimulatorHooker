@@ -1,9 +1,9 @@
 .theos
 *.o
 SBShortcutMenuSimulator
-PreferenceOrganizer2
 FLEXDylib
-Simulator.lnk
+Simulator
 kill
 */*.dylib
 */*.o
+PreferenceOrganizer2/POPreferences

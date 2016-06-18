@@ -6,4 +6,7 @@ Simulator
 kill
 */*.dylib
 */*.o
-PreferenceOrganizer2/POPreferences
+PreferenceOrganizer2
+FullSafari
+PreferenceLoader
+InternalPhotos
